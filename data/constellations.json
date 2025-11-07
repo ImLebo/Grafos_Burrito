@@ -1,0 +1,65 @@
+{
+  "constellations": [
+    {
+      "name": "Constelación del Burro",
+      "stars": [
+        {
+          "id": 1,
+          "label": "Alpha1",
+          "linkedTo": [
+            { "starId": 2, "distance": 120 },
+            { "starId": 4, "distance": 87 },
+            { "starId": 5, "distance": 101 }
+          ],
+          "radius": 0.4,
+          "timeToEat": 3,
+          "amountOfEnergy": 1,
+          "coordinates": { "x": 25, "y": 34 },
+          "hypergiant": false
+        },
+        {
+          "id": 2,
+          "label": "Beta23",
+          "linkedTo": [
+            { "starId": 1, "distance": 120 },
+            { "starId": 7, "distance": 45 },
+            { "starId": 3, "distance": 17 }
+          ],
+          "radius": 0.2,
+          "timeToEat": 2,
+          "amountOfEnergy": 2,
+          "coordinates": { "x": 37, "y": 15 },
+          "hypergiant": false
+        },
+        {
+          "id": 3,
+          "label": "Alpha53",
+          "linkedTo": [
+            { "starId": 5, "distance": 86 },
+            { "starId": 2, "distance": 17 },
+            { "starId": 9, "distance": 15 }
+          ],
+          "radius": 1,
+          "timeToEat": 1,
+          "amountOfEnergy": 3,
+          "coordinates": { "x": 75, "y": 43 },
+          "hypergiant": true
+        }
+      ]
+    }
+  ],
+  "burro": {
+    "nombre": "Galaxito",
+    "energiaInicial": 100,
+    "estadoSalud": "Excelente",
+    "pastoDisponibleKg": 300,
+    "edadActual": 12,
+    "tiempoDeVidaAniosLuz": 3567,
+    "nivelExperiencia": "Avanzado",
+    "hambre": 20,
+    "nivelInvestigacion": 5,
+    "consumoEnergiaInvestigacion": 2,
+    "velocidadDesplazamiento": 1.5,
+    "sonidoMuerte": "rebuzno_final.mp3"
+  }
+}
