@@ -2,48 +2,383 @@
   "constellations": [
     {
       "name": "Constelación del Burro",
+      "color": "#FFA500",
       "stars": [
         {
           "id": 1,
           "label": "Alpha1",
           "linkedTo": [
-            { "starId": 2, "distance": 120 },
-            { "starId": 4, "distance": 87 },
-            { "starId": 5, "distance": 101 }
+            {
+              "starId": 2,
+              "distance": 120
+            },
+            {
+              "starId": 4,
+              "distance": 87
+            },
+            {
+              "starId": 5,
+              "distance": 101
+            }
           ],
           "radius": 0.4,
           "timeToEat": 3,
           "amountOfEnergy": 1,
-          "coordinates": { "x": 25, "y": 34 },
+          "coordinates": {
+            "x": 25,
+            "y": 34
+          },
           "hypergiant": false
         },
         {
           "id": 2,
           "label": "Beta23",
           "linkedTo": [
-            { "starId": 1, "distance": 120 },
-            { "starId": 7, "distance": 45 },
-            { "starId": 3, "distance": 17 }
+            {
+              "starId": 1,
+              "distance": 120
+            },
+            {
+              "starId": 7,
+              "distance": 45
+            },
+            {
+              "starId": 3,
+              "distance": 17
+            }
           ],
           "radius": 0.2,
           "timeToEat": 2,
           "amountOfEnergy": 2,
-          "coordinates": { "x": 37, "y": 15 },
+          "coordinates": {
+            "x": 37,
+            "y": 15
+          },
           "hypergiant": false
         },
         {
           "id": 3,
           "label": "Alpha53",
           "linkedTo": [
-            { "starId": 5, "distance": 86 },
-            { "starId": 2, "distance": 17 },
-            { "starId": 9, "distance": 15 }
+            {
+              "starId": 5,
+              "distance": 86
+            },
+            {
+              "starId": 2,
+              "distance": 17
+            },
+            {
+              "starId": 9,
+              "distance": 15
+            }
           ],
           "radius": 1,
           "timeToEat": 1,
           "amountOfEnergy": 3,
-          "coordinates": { "x": 75, "y": 43 },
+          "coordinates": {
+            "x": 75,
+            "y": 43
+          },
           "hypergiant": true
+        }
+      ]
+    },
+    {
+      "name": "Constelación Draco",
+      "color": "#7FFF00",
+      "stars": [
+        {
+          "id": 101,
+          "label": "DracoA",
+          "linkedTo": [
+            {
+              "starId": 102,
+              "distance": 50
+            },
+            {
+              "starId": 103,
+              "distance": 70
+            },
+            {
+              "starId": 3,
+              "distance": 300
+            }
+          ],
+          "radius": 0.3,
+          "timeToEat": 2,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 140,
+            "y": 120
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 102,
+          "label": "DracoB",
+          "linkedTo": [
+            {
+              "starId": 101,
+              "distance": 50
+            },
+            {
+              "starId": 104,
+              "distance": 90
+            }
+          ],
+          "radius": 0.5,
+          "timeToEat": 4,
+          "amountOfEnergy": 4,
+          "coordinates": {
+            "x": 180,
+            "y": 160
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 103,
+          "label": "DracoC",
+          "linkedTo": [
+            {
+              "starId": 101,
+              "distance": 70
+            },
+            {
+              "starId": 104,
+              "distance": 60
+            }
+          ],
+          "radius": 1.2,
+          "timeToEat": 1,
+          "amountOfEnergy": 5,
+          "coordinates": {
+            "x": 200,
+            "y": 90
+          },
+          "hypergiant": true
+        },
+        {
+          "id": 104,
+          "label": "DracoD",
+          "linkedTo": [
+            {
+              "starId": 102,
+              "distance": 90
+            },
+            {
+              "starId": 103,
+              "distance": 60
+            }
+          ],
+          "radius": 0.4,
+          "timeToEat": 3,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 250,
+            "y": 130
+          },
+          "hypergiant": false
+        }
+      ]
+    },
+    {
+      "name": "Constelación Phoenix",
+      "color": [
+        64,
+        128,
+        255
+      ],
+      "stars": [
+        {
+          "id": 201,
+          "label": "Phx1",
+          "linkedTo": [
+            {
+              "starId": 202,
+              "distance": 40
+            },
+            {
+              "starId": 203,
+              "distance": 80
+            },
+            {
+              "starId": 103,
+              "distance": 350
+            }
+          ],
+          "radius": 0.6,
+          "timeToEat": 2,
+          "amountOfEnergy": 3,
+          "coordinates": {
+            "x": 300,
+            "y": 60
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 202,
+          "label": "Phx2",
+          "linkedTo": [
+            {
+              "starId": 201,
+              "distance": 40
+            },
+            {
+              "starId": 204,
+              "distance": 110
+            }
+          ],
+          "radius": 0.5,
+          "timeToEat": 3,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 350,
+            "y": 100
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 203,
+          "label": "Phx3",
+          "linkedTo": [
+            {
+              "starId": 201,
+              "distance": 80
+            },
+            {
+              "starId": 204,
+              "distance": 65
+            }
+          ],
+          "radius": 1.1,
+          "timeToEat": 1,
+          "amountOfEnergy": 5,
+          "coordinates": {
+            "x": 370,
+            "y": 40
+          },
+          "hypergiant": true
+        },
+        {
+          "id": 204,
+          "label": "Phx4",
+          "linkedTo": [
+            {
+              "starId": 202,
+              "distance": 110
+            },
+            {
+              "starId": 203,
+              "distance": 65
+            }
+          ],
+          "radius": 0.4,
+          "timeToEat": 3,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 410,
+            "y": 90
+          },
+          "hypergiant": false
+        }
+      ]
+    },
+    {
+      "name": "Constelación Nexus",
+      "color": "#ADFF2F",
+      "stars": [
+        {
+          "id": 301,
+          "label": "NexA",
+          "linkedTo": [
+            {
+              "starId": 302,
+              "distance": 55
+            },
+            {
+              "starId": 303,
+              "distance": 75
+            },
+            {
+              "starId": 203,
+              "distance": 360
+            }
+          ],
+          "radius": 0.7,
+          "timeToEat": 2,
+          "amountOfEnergy": 4,
+          "coordinates": {
+            "x": 460,
+            "y": 150
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 302,
+          "label": "NexB",
+          "linkedTo": [
+            {
+              "starId": 301,
+              "distance": 55
+            },
+            {
+              "starId": 304,
+              "distance": 95
+            }
+          ],
+          "radius": 0.5,
+          "timeToEat": 3,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 500,
+            "y": 190
+          },
+          "hypergiant": false
+        },
+        {
+          "id": 303,
+          "label": "NexC",
+          "linkedTo": [
+            {
+              "starId": 301,
+              "distance": 75
+            },
+            {
+              "starId": 304,
+              "distance": 60
+            }
+          ],
+          "radius": 1.3,
+          "timeToEat": 1,
+          "amountOfEnergy": 6,
+          "coordinates": {
+            "x": 520,
+            "y": 130
+          },
+          "hypergiant": true
+        },
+        {
+          "id": 304,
+          "label": "NexD",
+          "linkedTo": [
+            {
+              "starId": 302,
+              "distance": 95
+            },
+            {
+              "starId": 303,
+              "distance": 60
+            }
+          ],
+          "radius": 0.4,
+          "timeToEat": 3,
+          "amountOfEnergy": 2,
+          "coordinates": {
+            "x": 560,
+            "y": 170
+          },
+          "hypergiant": false
         }
       ]
     }
@@ -60,6 +395,6 @@
     "nivelInvestigacion": 5,
     "consumoEnergiaInvestigacion": 2,
     "velocidadDesplazamiento": 1.5,
-    "sonidoMuerte": "rebuzno_final.mp3"
+    "sonidoMuerte": "/assets/audio/muerteburro.mp3"
   }
 }

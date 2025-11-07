@@ -1,38 +1,68 @@
-import tkinter as tk
+"""Runner mínimo usando Pygame y el ViewManager.
+
+Este `main.py` crea una ventana Pygame, registra dos vistas de ejemplo
+(`constellation` y `other`) y arranca el bucle principal. Presionar ESC o
+cerrar la ventana terminará la aplicación. Presionar TAB en la vista
+`ConstellationView` solicitará el cambio a la vista `other` (demostración).
+"""
+import sys
+import pygame
+
+from screens.manager import ViewManager
+from screens.constellation_view import ConstellationView
 from config.loader import cargar_grafo_desde_json
 
-# Colores por constelación
-COLORES = ["yellow", "cyan", "magenta", "orange", "lime", "white"]
-
-def dibujar_constelacion(canvas, graph, color):
-    for star in graph.get_all_stars():
-        x, y = star.coordinates
-        # Dibujar conexiones
-        for neighbor_id in star.connections:
-            neighbor = graph.get_star(neighbor_id)
-            if neighbor:
-                nx, ny = neighbor.coordinates
-                canvas.create_line(x, y, nx, ny, fill=color)
-        # Dibujar estrella
-        r = 4 if not star.hypergiant else 6
-        canvas.create_oval(x - r, y - r, x + r, y + r, fill=color, outline="")
-        canvas.create_text(x + 10, y, text=star.label, fill=color, font=("Arial", 8))
 
 def main():
-    root = tk.Tk()
-    root.title("Visualización de Constelaciones - Grafos TKINTER")
-    root.configure(bg="black")
+    pygame.init()
+    # Intentar inicializar módulos que puedan fallar en entornos sin display
+    try:
+        pygame.font.init()
+    except Exception:
+        pass
 
-    canvas = tk.Canvas(root, width=400, height=400, bg="black")
-    canvas.pack(padx=10, pady=10)
+    # Aumentar tamaño de ventana para mejorar visibilidad
+    size = (1280, 800)
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Grafos - Vistas (Pygame)")
 
-    constelaciones = cargar_grafo_desde_json("data/constellations.json")
+    clock = pygame.time.Clock()
 
-    for i, g in enumerate(constelaciones):
-        color = COLORES[i % len(COLORES)]
-        dibujar_constelacion(canvas, g, color)
+    manager = ViewManager()
 
-    root.mainloop()
+    # Cargar grafos reales desde el JSON
+    graphs = cargar_grafo_desde_json("data/constellations.json")
+
+    # Registrar vistas (constellation con datos reales; other es placeholder reutilizando la clase)
+    const_view = ConstellationView("Constelaciones", graphs)
+    other_view = ConstellationView("Otra Vista (placeholder)", graphs)
+
+    manager.register_view("constellation", const_view)
+    manager.register_view("other", other_view)
+
+    manager.set_view("constellation")
+
+    running = True
+    while running:
+        dt = clock.tick(60) / 1000.0
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+
+            # Enviar evento al gestor (gestiona cambio de vistas si se solicita)
+            manager.handle_event(event)
+
+        manager.update(dt)
+        manager.render(screen)
+
+        pygame.display.flip()
+
+    pygame.quit()
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
