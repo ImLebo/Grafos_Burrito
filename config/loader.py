@@ -64,4 +64,7 @@ def cargar_grafo_desde_json(ruta_json):
                     global_star_map[from_id].add_connection(to_id, dist)
                     global_star_map[to_id].add_connection(from_id, dist)
 
-    return constelaciones
+    # Extraer datos del burro si existen
+    burro_data = data.get("burro", None)
+    
+    return constelaciones, burro_data
