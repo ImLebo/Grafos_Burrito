@@ -53,11 +53,14 @@ class ConstellationView(View):
         # Fondo de estrellas del panel
         self._starfield_surf = None
         self._starfield_size = (0, 0)
+        self._starfield_padding = 100  # padding alrededor para parallax
         
         # Burro (personaje)
+        self._burro_data = burro_data  # Guardar datos originales para reinicios
         self.burro: Optional[Burro] = None
-        if burro_data:
-            self.burro = Burro(burro_data, sprite_scale=(40, 40))
+        if self._burro_data:
+            # Efecto espejo horizontal para que mire a la derecha manteniendo orientación
+            self.burro = Burro(self._burro_data, sprite_scale=(64, 64), sprite_rotation_degrees=0, sprite_flip_x=True)
         self.burro_initial_star_selected = False  # Flag para selección inicial
 
     def on_enter(self):
@@ -66,6 +69,12 @@ class ConstellationView(View):
                 self.font = pygame.font.SysFont("Consolas", 18)
             except Exception:
                 self.font = None
+        # Reiniciar burro al entrar (reseteo de parámetros pedido por el usuario)
+        if self._burro_data:
+            self.burro = Burro(self._burro_data, sprite_scale=(64, 64), sprite_rotation_degrees=0, sprite_flip_x=True)
+        self.burro_initial_star_selected = False
+        if self.burro:
+            self.burro.current_star_id = None
         # Ajustar tablero si no existe: ocupar 80% de alto comenzando en y=0
         if self.board_rect is None:
             display_w, display_h = pygame.display.get_surface().get_size()
@@ -226,10 +235,11 @@ class ConstellationView(View):
                     self._compute_scaled_positions()
                     # Mantener índice global (no cambia estructura)
                     self.selected_star_id = None
-                    # Si el burro estaba en la hipergigante, moverlo a la constelación destino
-                    if self.burro and self.burro.current_star_id == a:
+                    # Trasladar al burro a la estrella enlazada en la constelación destino
+                    if self.burro:
                         new_pos = self.scaled_positions.get(target_gi, {}).get(b, (0, 0))
                         self.burro.moverse_a_estrella(b, new_pos)
+                        self.burro_initial_star_selected = True
                     break
     
     def _select_initial_star(self, mouse_pos):
@@ -312,10 +322,32 @@ class ConstellationView(View):
 
         # Tablero (fondo con borde)
         if self.board_rect:
-            # Fondo espacial dentro del panel
+            # Fondo espacial dentro del panel con parallax sutil
             self._ensure_starfield()
             if self._starfield_surf is not None:
-                surface.blit(self._starfield_surf, self.board_rect.topleft)
+                bw, bh = self.board_rect.size
+                pad = self._starfield_padding
+                # Intensidad del parallax (px máximos de desplazamiento)
+                parallax_strength = 30
+                # Normalizar desplazamiento respecto al centro del panel
+                cx, cy = self.board_rect.center
+                fx, fy = self.zoom_focus
+                dx = 0.0 if bw == 0 else (fx - cx) / bw
+                dy = 0.0 if bh == 0 else (fy - cy) / bh
+                # Magnitud según nivel de zoom actual
+                denom = max(1e-6, (self.zoom_in_factor - 1.0))
+                mag = max(0.0, min(1.0, (self.zoom - 1.0) / denom))
+                offx = int(-dx * parallax_strength * mag)
+                offy = int(-dy * parallax_strength * mag)
+                # Área del source dentro del starfield con padding
+                src_x = pad + offx
+                src_y = pad + offy
+                # Asegurar que el área esté dentro de los límites del source
+                sw, sh = self._starfield_surf.get_size()
+                src_x = max(0, min(sw - bw, src_x))
+                src_y = max(0, min(sh - bh, src_y))
+                area = pygame.Rect(src_x, src_y, bw, bh)
+                surface.blit(self._starfield_surf, self.board_rect.topleft, area)
             else:
                 pygame.draw.rect(surface, (0, 0, 0), self.board_rect)
             pygame.draw.rect(surface, (80, 100, 140), self.board_rect, width=3, border_radius=12)
@@ -340,7 +372,9 @@ class ConstellationView(View):
             pos_map = self.scaled_positions.get(gi, {})
             burro_pos = pos_map.get(self.burro.current_star_id)
             if burro_pos:
-                self.burro.render(surface, burro_pos)
+                bx, by = burro_pos
+                bx, by = self._apply_zoom(bx, by)
+                self.burro.render(surface, (bx, by))
 
         # UI inferior (fuera del tablero): ayuda breve y estadísticas del burro
         if self.font:
@@ -368,7 +402,9 @@ class ConstellationView(View):
     def _ensure_starfield(self):
         if not self.board_rect:
             return
-        size = (self.board_rect.width, self.board_rect.height)
+        # Generar con padding para permitir recorte con parallax
+        size = (self.board_rect.width + 2 * self._starfield_padding,
+                self.board_rect.height + 2 * self._starfield_padding)
         if self._starfield_surf is None or self._starfield_size != size:
             self._starfield_surf = self._generate_starfield(size)
             self._starfield_size = size

@@ -11,7 +11,7 @@ from typing import Dict, Optional
 class Burro:
     """Representa al burro con sus estadísticas, estado y animaciones."""
     
-    def __init__(self, data: dict, sprite_scale: tuple = (48, 48)):
+    def __init__(self, data: dict, sprite_scale: tuple = (48, 48), sprite_rotation_degrees: int = 0, sprite_flip_x: bool = False, sprite_flip_y: bool = False):
         """
         Args:
             data: Diccionario con los datos del burro desde el JSON.
@@ -38,6 +38,9 @@ class Burro:
         self.animaciones_paths = data.get("animaciones", {})
         self.animaciones: Dict[str, AnimatedSprite] = {}
         self.current_animation = "principal"
+        self.sprite_rotation_degrees = sprite_rotation_degrees % 360
+        self.sprite_flip_x = sprite_flip_x
+        self.sprite_flip_y = sprite_flip_y
         self._cargar_animaciones(sprite_scale)
         
         # Posición en pantalla (se actualiza externamente)
@@ -47,18 +50,32 @@ class Burro:
         self.current_star_id: Optional[int] = None
     
     def _cargar_animaciones(self, scale: tuple):
-        """Carga todos los GIFs de animación especificados en el JSON."""
+        """Carga todos los GIFs de animación especificados en el JSON.
+
+        Se aplica rotación a la derecha (90°) y eliminación de fondo para mayor
+        integración visual con el espacio.
+        """
         for anim_name, path in self.animaciones_paths.items():
             try:
-                sprite = AnimatedSprite(path, fps=12, scale=scale)
+                sprite = AnimatedSprite(
+                    path,
+                    fps=12,
+                    scale=scale,
+                    rotation_degrees=self.sprite_rotation_degrees,  # rotación deseada
+                    remove_background=True,        # intentar quitar fondo
+                    bg_color=None,                 # autodetect
+                    bg_tolerance=14,               # tolerancia un poco mayor
+                    flip_x=self.sprite_flip_x,
+                    flip_y=self.sprite_flip_y,
+                )
                 if sprite.has_frames():
                     self.animaciones[anim_name] = sprite
-                    print(f"[Burro] Animación '{anim_name}' cargada correctamente.")
+                    print(f"[Burro] Animación '{anim_name}' cargada correctamente (rotada+sin fondo).")
                 else:
                     print(f"[Burro] Animación '{anim_name}' sin frames: {path}")
             except Exception as e:
                 print(f"[Burro] Error cargando animación '{anim_name}': {e}")
-        
+
         # Si no hay ninguna animación, crear placeholder
         if not self.animaciones:
             print("[Burro] No se cargaron animaciones. Usando placeholder.")

@@ -6,7 +6,8 @@ class MainMenu(View):
     def __init__(self, background_path: str):
         super().__init__()
         self.background_path = background_path
-        self.options = ["Simulación", "Editor", "Salir"]
+        # Agregamos opción para editar a Burro antes de "Salir"
+        self.options = ["Simulación", "Editor", "Burro", "Salir"]
         self.selected = 0
         self.font = None
         self.small_font = None
@@ -87,8 +88,9 @@ class MainMenu(View):
                     self.requested_view = "constellation"
                 elif self.selected == 1:
                     self.requested_view = "editor"
+                elif self.selected == 2:
+                    self.requested_view = "burro_editor"
                 else:
-                    # salir
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     def update(self, dt):
@@ -120,8 +122,9 @@ class MainMenu(View):
             color = (255, 255, 255) if i == self.selected else (180, 180, 180)
             surf = self.small_font.render(opt, True, color)
             x = surface.get_width() // 2 - surf.get_width() // 2
-            y = 250 + i * 70
+            # Subimos un poco las cards para evitar que el texto de ayuda se monte encima
+            y = 200 + i * 70
             surface.blit(surf, (x, y))
         # Instrucción
-        hint = self.small_font.render("Usa ↑/↓ y Enter para seleccionar | TAB desde otras vistas vuelve aquí", True, (200, 200, 210))
+        hint = self.small_font.render("↑/↓ + Enter", True, (200, 200, 210))
         surface.blit(hint, (surface.get_width() // 2 - hint.get_width() // 2, 500))
