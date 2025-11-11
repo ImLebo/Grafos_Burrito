@@ -6,8 +6,8 @@ class MainMenu(View):
     def __init__(self, background_path: str):
         super().__init__()
         self.background_path = background_path
-        # Agregamos opción para editar a Burro antes de "Salir"
-        self.options = ["Simulación", "Editor", "Burro", "Salir"]
+        # Agregamos opción para editar parámetros de misión
+        self.options = ["Simulación", "Editor", "Burro", "Parámetros", "Salir"]
         self.selected = 0
         self.font = None
         self.small_font = None
@@ -90,6 +90,8 @@ class MainMenu(View):
                     self.requested_view = "editor"
                 elif self.selected == 2:
                     self.requested_view = "burro_editor"
+                elif self.selected == 3:
+                    self.requested_view = "mission_params"
                 else:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
 

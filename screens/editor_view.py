@@ -11,6 +11,7 @@ Controles:
 - +/-: cambia el radio de la estrella seleccionada
 - T/G: aumenta/disminuye timeToEat de la estrella seleccionada
 - U/J: aumenta/disminuye amountOfEnergy de la estrella seleccionada
+ - I/O: aumenta/disminuye timeToResearch de la estrella seleccionada
 - C: abrir selector de color para la constelación
 - S: guarda la constelación nueva en data/constellations.json
 """
@@ -163,7 +164,7 @@ class ConstellationEditorView(View):
                 self.create_mode = True
             elif event.key == pygame.K_k:
                 self._connect_last_two()
-            elif event.key == pygame.K_j:
+            elif event.key == pygame.K_h:
                 self._handle_h_press()
             elif event.key in (pygame.K_PLUS, pygame.K_EQUALS):  # + (teclado)
                 self._change_radius(0.1)
@@ -177,6 +178,10 @@ class ConstellationEditorView(View):
                 self._change_energy(1)
             elif event.key == pygame.K_j:
                 self._change_energy(-1)
+            elif event.key == pygame.K_i:
+                self._change_time_to_research(1)
+            elif event.key == pygame.K_o:
+                self._change_time_to_research(-1)
             elif event.key == pygame.K_c:
                 # Toggle selector de color
                 self.color_selector_visible = not self.color_selector_visible
@@ -267,10 +272,11 @@ class ConstellationEditorView(View):
         # Convertir coordenadas de pantalla a coordenadas del mundo (JSON)
         world_x, world_y = self._screen_to_world(pos[0], pos[1])
         
-        # crear star con valores por defecto
+        # crear star con valores por defecto (incluyendo time_to_research)
         new_id = self._next_free_id()
         label = f"New{new_id}"
-        star = Star(new_id, label, world_x, world_y, radius=0.5, time_to_eat=1, energy=1, hypergiant=False)
+        # time_to_research por defecto igual a time_to_eat (1)
+        star = Star(new_id, label, world_x, world_y, radius=0.5, time_to_eat=1, energy=1, hypergiant=False, time_to_research=1)
         self.graph.add_star(star)
         self.used_ids.add(new_id)
         self.selection_history.append(new_id)
@@ -350,6 +356,15 @@ class ConstellationEditorView(View):
             return
         s.time_to_eat = max(0, s.time_to_eat + delta)
 
+    def _change_time_to_research(self, delta: int):
+        if not self.selection_history:
+            return
+        s = self.graph.get_star(self.selection_history[-1])
+        if not s:
+            return
+        current = getattr(s, "time_to_research", 0)
+        s.time_to_research = max(0, current + delta)
+
     def _change_energy(self, delta: int):
         if not self.selection_history:
             return
@@ -379,7 +394,7 @@ class ConstellationEditorView(View):
             new_star = Star(
                 s.id, s.label, 
                 s.coordinates[0], s.coordinates[1],
-                s.radius, s.time_to_eat, s.energy, s.hypergiant
+                s.radius, s.time_to_eat, s.energy, s.hypergiant, s.time_to_research
             )
             self.graph.add_star(new_star)
         
@@ -529,6 +544,7 @@ class ConstellationEditorView(View):
                 "linkedTo": linked,
                 "radius": float(s.radius),
                 "timeToEat": int(s.time_to_eat),
+                "timeToResearch": int(getattr(s, "time_to_research", 0)),
                 "amountOfEnergy": int(s.energy),
                 "coordinates": {"x": int(s.coordinates[0]), "y": int(s.coordinates[1])},
                 "hypergiant": bool(s.hypergiant)
@@ -622,7 +638,8 @@ class ConstellationEditorView(View):
                 pygame.draw.circle(surface, (120, 160, 220), (sx, sy), radius_px + 4, width=1)
 
             if self.font:
-                info = f"{s.label} r={s.radius} t={s.time_to_eat} e={s.energy}"
+                tr = getattr(s, "time_to_research", 0)
+                info = f"{s.label} r={s.radius} t={s.time_to_eat} tr={tr} e={s.energy}"
                 lbl = self.font.render(info, True, (220, 230, 240))
                 surface.blit(lbl, (sx + radius_px + 4, sy - radius_px))
 
@@ -650,8 +667,8 @@ class ConstellationEditorView(View):
         if self.font:
             help_lines = [
                 "TAB: menú principal | F1: constelaciones | E: limpiar | L: cargar | N+Click: nueva estrella | C: color",
-                "K: conectar 2 seleccionadas | H: hipergigante | J: enlace externo",
-                "+/- radio | T/G tiempo | U/J energía | R: renombrar | S: guardar",
+                "K: conectar 2 seleccionadas | H: hipergigante / enlace externo",
+                "+/- radio | T/G tiempo comer | I/O tiempo investigar | U/J energía | R: renombrar | S: guardar",
             ]
             base_y = self.board_rect.bottom + 10 if self.board_rect else 10
             x = 20

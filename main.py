@@ -15,11 +15,17 @@ from screens.main_menu import MainMenu
 
 from screens.burro_editor_view import BurroEditorView
 from config.loader import cargar_grafo_desde_json
+from screens.mission_params_view import MissionParamsView
 
 
 
 def main():
     pygame.init()
+    # Inicializar audio si es posible
+    try:
+        pygame.mixer.init()
+    except Exception:
+        pass
     try:
         pygame.font.init()
     except Exception:
@@ -34,16 +40,18 @@ def main():
     bg_path = "assets/images/background/background.gif"
 
     # Cargar grafos y datos del burro desde el JSON
-    graphs, burro_data = cargar_grafo_desde_json("data/constellations.json")
+    graphs, burro_data, mission_params = cargar_grafo_desde_json("data/constellations.json")
     manager = ViewManager()
-    const_view = ConstellationView("Constelaciones", graphs, burro_data=burro_data)
+    const_view = ConstellationView("Constelaciones", graphs, burro_data=burro_data, mission_params=mission_params)
     burro_editor = BurroEditorView(burro_data)
     editor_view = ConstellationEditorView(existing_graphs=graphs)
+    params_view = MissionParamsView(mission_params, json_path="data/constellations.json")
     menu_view = MainMenu(bg_path)
     manager.register_view("main_menu", menu_view)
     manager.register_view("constellation", const_view)
     manager.register_view("editor", editor_view)
     manager.register_view("burro_editor", burro_editor)
+    manager.register_view("mission_params", params_view)
     manager.set_view("main_menu")
 
     running = True

@@ -27,8 +27,6 @@ class Burro:
         self.edad = data.get("edadActual", 0)
         self.tiempo_vida = data.get("tiempoDeVidaAniosLuz", 0)
         self.nivel_experiencia = data.get("nivelExperiencia", "Principiante")
-        self.hambre = data.get("hambre", 0)
-        self.hambre_max = 100  # Límite de hambre
         self.nivel_investigacion = data.get("nivelInvestigacion", 0)
         self.consumo_energia = data.get("consumoEnergiaInvestigacion", 1)
         self.velocidad = data.get("velocidadDesplazamiento", 1.0)
@@ -95,14 +93,7 @@ class Burro:
         if self.current_animation in self.animaciones:
             self.animaciones[self.current_animation].update(dt)
         
-        # Lógica de hambre (aumenta con el tiempo)
-        self.hambre = min(self.hambre_max, self.hambre + dt * 0.5)  # Incremento lento
-        
-        # Si tiene mucha hambre, cambiar animación
-        if self.hambre > 70 and self.current_animation != "hambre":
-            self.set_animation("hambre")
-        elif self.hambre <= 70 and self.current_animation == "hambre":
-            self.set_animation("principal")
+        # Sin mecánica de hambre: mantener animación principal por defecto
     
     def render(self, surface: pygame.Surface, position: tuple):
         """Dibuja el burro en la posición especificada."""
@@ -117,14 +108,11 @@ class Burro:
             pygame.draw.circle(surface, (255, 200, 0), position, 16)
             pygame.draw.circle(surface, (100, 50, 0), position, 16, 2)
     
-    def comer(self, cantidad: int = 20):
-        """El burro come y reduce el hambre."""
-        if self.pasto_disponible >= cantidad:
-            self.pasto_disponible -= cantidad
-            self.hambre = max(0, self.hambre - cantidad * 2)
-            print(f"[Burro] {self.nombre} comió. Hambre: {self.hambre:.1f}")
-        else:
-            print(f"[Burro] No hay suficiente pasto disponible.")
+    def comer(self, cantidad: int = 0):
+        """Comer manual (ya no se usa la mecánica de hambre)."""
+        # La alimentación se procesa automáticamente al llegar a una estrella.
+        # Este método queda como placeholder para compatibilidad.
+        print("[Burro] La alimentación se gestiona automáticamente en cada estrella.")
     
     def moverse_a_estrella(self, star_id: int, position: tuple):
         """Mueve el burro a una nueva estrella."""
@@ -142,7 +130,20 @@ class Burro:
         """Ejecuta la lógica de muerte del burro."""
         self.set_animation("muerte")
         print(f"[Burro] {self.nombre} ha muerto.")
-        # Aquí se podría reproducir el sonido de muerte si se implementa audio
+        # Reproducir el sonido de muerte si es posible
+        try:
+            import os
+            import pygame
+            path = self.sonido_muerte or ""
+            if path.startswith("/"):
+                # normalizar ruta relativa del repo
+                path = path[1:]
+            if os.path.exists(path):
+                snd = pygame.mixer.Sound(path)
+                snd.play()
+        except Exception as e:
+            # No bloquear por audio
+            pass
     
     def __str__(self):
         return f"{self.nombre} ({self.estado_salud}) - Energía: {self.energia}/{self.energia_max}"

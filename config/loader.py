@@ -8,6 +8,15 @@ def cargar_grafo_desde_json(ruta_json):
     constelaciones = []
     global_star_map = {}
     graph_by_star_id = {}
+    # Parámetros de misión por defecto (si no existen en JSON)
+    mission_params = {
+        "maxEatFraction": 0.5,
+        "kgPerSecondEat": 5.0,
+        "energyPerKgPct": {"Excelente": 5, "Regular": 3, "Malo": 2},
+        "researchEnergyPerSecond": 2.0,
+        "travelSpeedUnits": 100.0,  # unidades de distancia por segundo para animación
+        "routeObjective": "min_cost"  # o "max_stars_min_cost" en el futuro
+    }
 
     # Primera pasada: construir grafos y estrellas
     for constelacion in data.get("constellations", []):
@@ -31,7 +40,8 @@ def cargar_grafo_desde_json(ruta_json):
                     s.get("radius", 0.5),
                     s.get("timeToEat", 0),
                     s.get("amountOfEnergy", 0),
-                    s.get("hypergiant", False)
+                    s.get("hypergiant", False),
+                    s.get("timeToResearch", None)
                 )
             except KeyError:
                 # Si falta algún campo crítico, omitir la estrella
@@ -66,5 +76,11 @@ def cargar_grafo_desde_json(ruta_json):
 
     # Extraer datos del burro si existen
     burro_data = data.get("burro", None)
-    
-    return constelaciones, burro_data
+
+    # Cargar missionParams si están definidos
+    if "missionParams" in data and isinstance(data["missionParams"], dict):
+        mp = data["missionParams"]
+        # Merge no destructivo respetando tipos básicos esperados
+        mission_params.update({k: v for k, v in mp.items() if k in mission_params or True})
+
+    return constelaciones, burro_data, mission_params

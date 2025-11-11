@@ -32,7 +32,6 @@ class BurroEditorView(View):
             ("edadActual", "Edad Actual"),
             ("tiempoDeVidaAniosLuz", "Tiempo de Vida (Años Luz)"),
             ("nivelExperiencia", "Nivel de Experiencia"),
-            ("hambre", "Hambre"),
             ("nivelInvestigacion", "Nivel Investigación"),
             ("consumoEnergiaInvestigacion", "Consumo Energía Investigación"),
             ("velocidadDesplazamiento", "Velocidad Desplazamiento"),
